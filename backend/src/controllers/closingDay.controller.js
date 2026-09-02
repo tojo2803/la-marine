@@ -7,8 +7,7 @@ const listClosingDays = catchAsync(async (req, res) => {
   res.json({ status: "success", data: closingDays });
 });
 
-// Protégée (back-office) : ajouter un jour de fermeture exceptionnel
-// (jour férié, événement privé...).
+
 const createClosingDay = catchAsync(async (req, res) => {
   const { date, reason } = req.body;
   if (!date) {

@@ -43,7 +43,7 @@ Reservation.init(
       allowNull: false,
     },
     time: {
-      // Heure d'arrivée, ex: "12h30" — doit correspondre à un TimeSlot existant
+     
       type: DataTypes.STRING(5),
       allowNull: false,
     },

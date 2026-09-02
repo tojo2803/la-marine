@@ -1,8 +1,6 @@
 const { TimeSlot } = require("../models");
 
-// Toutes les méthodes passent par les méthodes de modèle Sequelize
-// (findAll, findOne, create...), qui génèrent des requêtes préparées
-// (paramétrées) en interne — jamais de concaténation de SQL.
+
 const timeSlotRepository = {
   findAll: () => TimeSlot.findAll({ order: [["service", "ASC"], ["time", "ASC"]] }),
 

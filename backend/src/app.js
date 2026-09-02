@@ -18,12 +18,10 @@ app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 
 app.use("/api", routes);
 
-// 404 pour toute route non définie
 app.use((req, res) => {
   res.status(404).json({ status: "error", message: "Ressource non trouvée." });
 });
 
-// Doit rester en dernier : middleware de gestion d'erreurs centralisé.
 app.use(errorHandler);
 
 module.exports = app;

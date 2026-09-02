@@ -1,5 +1,4 @@
-// Petit script pour créer un premier compte administrateur.
-// Usage : node src/scripts/createAdmin.js admin@lamarine.fr motdepasse "Nom Prénom"
+
 require("dotenv").config();
 const { Admin } = require("../models");
 const authService = require("../services/auth.service");

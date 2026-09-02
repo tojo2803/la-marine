@@ -6,14 +6,7 @@ const closingDayRepository = require("../repositories/closingDay.repository");
 const { RestaurantSettings } = require("../models");
 const AppError = require("../utils/AppError");
 
-// ---------------------------------------------------------------------------
-// Règles métier définies avec A2SD (voir DP - compétence "Développer des
-// composants métier") :
-//   - impossible de réserver un jour de fermeture (hebdo ou exceptionnel)
-//   - impossible de réserver une date passée
-//   - impossible de dépasser la capacité maximale d'un créneau
-//   - chaque réservation a un statut : pending / confirmed / cancelled
-// ---------------------------------------------------------------------------
+
 
 function isDateInPast(dateStr) {
   const today = new Date();
@@ -74,8 +67,7 @@ const reservationService = {
         const alreadyBooked = await reservationRepository.sumGuestsForSlot(timeSlot.id, date, transaction);
 
         if (alreadyBooked + Number(guests) > timeSlot.capacity) {
-          // 409 Conflict plutôt que 500 : le client peut afficher "Créneau
-          // complet" et proposer un autre créneau (comportement validé avec le tuteur).
+
           throw new AppError(
             "Ce créneau est complet pour la date demandée. Merci de choisir un autre horaire.",
             409

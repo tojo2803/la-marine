@@ -4,7 +4,6 @@ Ce dossier permet de lancer **l'intégralité du projet** (base de données Post
 
 C'est un choix assumé : plutôt que de déployer sur un hébergeur externe (Render, Railway...) dont la configuration spécifique n'aurait pas été pleinement maîtrisée, ce déploiement conteneurisé démontre les mêmes compétences (isolation des services, configuration par variables d'environnement, reproductibilité) sans dépendre d'un tiers.
 
-> **Remarque** : le dossier `backend/` contient aussi son propre `docker-compose.yml`, plus simple (PostgreSQL seul), utile si tu veux développer le backend en local avec `npm run dev` sans reconstruire d'image à chaque changement. Le `docker-compose.yml` **à la racine** (celui de ce README) est celui à utiliser pour le déploiement complet du projet.
 
 ## Structure
 
@@ -26,7 +25,7 @@ C'est un choix assumé : plutôt que de déployer sur un hébergeur externe (Ren
 
 ```bash
 cp .env.example .env
-# Ouvre .env et personnalise les valeurs si tu veux (sinon les valeurs par défaut suffisent pour tester)
+
 
 docker compose up -d --build
 ```
@@ -39,7 +38,7 @@ La première fois, Docker construit les images (peut prendre 1 à 2 minutes : t�
 docker compose ps
 ```
 
-Tu dois voir 4 conteneurs : `la-marine-postgres`, `la-marine-backend`, `la-marine-frontend`, `la-marine-adminer`, tous avec le statut `running` (ou `healthy` pour postgres).
+Les 4 conteneurs : `la-marine-postgres`, `la-marine-backend`, `la-marine-frontend`, `la-marine-adminer`, tous avec le statut `running` (ou `healthy` pour postgres).
 
 Le backend applique **automatiquement** les migrations au démarrage (voir `docker-entrypoint.sh`) — inutile de le faire à la main comme en développement local.
 
@@ -84,14 +83,3 @@ docker compose logs -f frontend
 docker compose down       # arrête les conteneurs, garde les données
 docker compose down -v    # arrête ET supprime les données (repart de zéro)
 ```
-
-## Ce que ce déploiement démontre concrètement
-
-- **Isolation des services** : base de données, backend et frontend ne partagent rien directement, ils communiquent uniquement via le réseau Docker ou des ports exposés
-- **Configuration externalisée** : aucune valeur sensible ou spécifique à un environnement n'est codée en dur (tout passe par des variables d'environnement, un seul fichier `.env` à la racine)
-- **Reproductibilité** : n'importe qui avec Docker installé peut reconstruire exactement le même environnement avec `docker compose up -d --build`
-- **Migrations automatisées et rejouables** : le script `docker-entrypoint.sh` applique les migrations à chaque démarrage du backend, sans risque de casser quoi que ce soit si elles ont déjà été appliquées
-
-## Limite assumée
-
-Ce déploiement reste **local** : il ne remplace pas une mise en production réelle sur un hébergeur accessible depuis Internet. Le choix de l'hébergeur final n'a pas encore été arbitré avec la direction d'A2SD — ce déploiement conteneurisé constitue néanmoins une préparation concrète et directement transposable le jour où ce choix sera fait (les mêmes images Docker pourraient être déployées telles quelles sur la plupart des hébergeurs compatibles conteneurs).

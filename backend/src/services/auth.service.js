@@ -14,8 +14,7 @@ const authService = {
 
     const admin = await adminRepository.findByEmailWithPassword(email);
     if (!admin) {
-      // Message volontairement générique : ne pas indiquer si c'est l'email
-      // ou le mot de passe qui est incorrect (bonne pratique de sécurité).
+
       throw new AppError("Identifiants invalides.", 401);
     }
 

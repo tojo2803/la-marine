@@ -103,13 +103,12 @@ async function run() {
 
   console.log("\n=== 5. Créneau complet (409 Conflict) ===");
   {
-    // Le créneau seedé a une capacité de 20. On envoie plusieurs réservations
-    // de 7 personnes sur le même créneau/date jusqu'à dépasser la capacité.
+
     const date = toISODate(futureDate(15));
     const slot = { ...baseReservation, date, time: "20h00", guests: 7 };
     const r1 = await call("POST", "/reservations", slot);
     const r2 = await call("POST", "/reservations", slot);
-    const r3 = await call("POST", "/reservations", slot); // 7+7+7 = 21 > 20 → doit échouer
+    const r3 = await call("POST", "/reservations", slot);
     report("1ère réservation (7 pers.)", 201, r1.status);
     report("2e réservation (7 pers., total 14)", 201, r2.status);
     report("3e réservation (7 pers., total 21 > capacité 20)", 409, r3.status, r3.data?.message ? `— ${r3.data.message}` : "");

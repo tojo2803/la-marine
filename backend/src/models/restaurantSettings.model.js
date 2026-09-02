@@ -1,7 +1,7 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/database");
 
-// Table à une seule ligne contenant les paramètres généraux du restaurant.
+
 class RestaurantSettings extends Model {}
 
 RestaurantSettings.init(
@@ -11,7 +11,7 @@ RestaurantSettings.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    // 0 = dimanche ... 6 = samedi (convention JS Date#getDay). null = pas de fermeture hebdo.
+    
     closedWeekday: {
       type: DataTypes.INTEGER,
       allowNull: true,

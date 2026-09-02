@@ -1,9 +1,6 @@
 const jwt = require("jsonwebtoken");
 const AppError = require("../utils/AppError");
 
-// Protège les routes réservées au back-office (dashboard, gestion des
-// créneaux, jours de fermeture...). Le front-end doit envoyer le token reçu
-// au login dans l'en-tête : Authorization: Bearer <token>
 function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {

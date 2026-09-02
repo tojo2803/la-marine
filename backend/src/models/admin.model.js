@@ -1,8 +1,7 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/database");
 
-// Compte administrateur pour l'accès au back-office (dashboard).
-// Le mot de passe n'est jamais stocké en clair : voir auth.service.js (bcrypt).
+
 class Admin extends Model {}
 
 Admin.init(
@@ -33,11 +32,11 @@ Admin.init(
     tableName: "admins",
     timestamps: true,
     defaultScope: {
-      // Ne jamais renvoyer le hash par défaut dans les requêtes classiques
+
       attributes: { exclude: ["passwordHash"] },
     },
     scopes: {
-      // Utilisé explicitement uniquement lors de la vérification du login
+     
       withPassword: { attributes: {} },
     },
   }

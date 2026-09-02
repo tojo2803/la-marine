@@ -23,13 +23,6 @@ const reservationRepository = {
 
   updateStatus: (id, status) => Reservation.update({ status }, { where: { id } }),
 
-  // Somme des couverts déjà réservés (statuts pending + confirmed) pour un
-  // créneau donné à une date donnée. Utilisée par le service pour vérifier
-  // la capacité disponible avant de créer une nouvelle réservation.
-  //
-  // Exécutée dans une transaction avec verrouillage (voir reservation.service.js)
-  // afin d'éviter qu'une réservation concurrente ne soit acceptée entre la
-  // vérification et l'écriture (cf. piste de progression identifiée dans le DP).
   sumGuestsForSlot: async (timeSlotId, date, transaction) => {
     const total = await Reservation.sum("guests", {
       where: {
@@ -42,7 +35,7 @@ const reservationRepository = {
     return total || 0;
   },
 
-  sequelize, // exposé uniquement pour la gestion de transaction dans le service
+  sequelize, 
 };
 
 module.exports = reservationRepository;

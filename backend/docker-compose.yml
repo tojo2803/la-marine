@@ -1,13 +1,5 @@
 version: "3.9"
 
-# Lance uniquement la base de données PostgreSQL en conteneur.
-# Le backend Node.js continue de tourner directement sur ta machine
-# (plus simple pour le développement : rechargement à chaud, débogage...).
-#
-# Démarrer :   docker compose up -d
-# Arrêter :    docker compose down
-# Tout effacer (recommence de zéro) : docker compose down -v
-
 services:
   postgres:
     image: postgres:16-alpine
@@ -27,8 +19,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # Interface web facultative pour consulter la base facilement dans un navigateur.
-  # Accessible sur http://localhost:8080 une fois lancée.
+
   adminer:
     image: adminer:latest
     container_name: la-marine-adminer

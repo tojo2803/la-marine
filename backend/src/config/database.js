@@ -1,8 +1,7 @@
 const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
-// Instance unique de Sequelize pour toute l'application (point d'entrée unique,
-// comme évoqué dans le DP pour simplifier l'injection de dépendance).
+
 const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,

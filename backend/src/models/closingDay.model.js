@@ -1,9 +1,7 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/database");
 
-// Jour de fermeture exceptionnel (jour férié, événement privé, etc.).
-// La fermeture hebdomadaire récurrente (ex: le lundi) est gérée séparément
-// dans RestaurantSettings.closedWeekday.
+
 class ClosingDay extends Model {}
 
 ClosingDay.init(

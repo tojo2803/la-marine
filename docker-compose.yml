@@ -1,14 +1,5 @@
 version: "3.9"
 
-# Déploiement LOCAL complet du projet La Marine : base de données,
-# backend et frontend tournent chacun dans leur propre conteneur, comme
-# ce serait le cas en production, mais sur ta machine. Objectif : pouvoir
-# démontrer un "vrai" déploiement conteneurisé sans dépendre d'un
-# hébergeur externe.
-#
-# Démarrer :  docker compose up -d --build
-# Arrêter :   docker compose down
-# Tout effacer (recommence de zéro) : docker compose down -v
 
 services:
   postgres:
@@ -40,8 +31,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-      # À l'intérieur du réseau Docker, "postgres" est le nom du service
-      # ci-dessus (pas "localhost" : chaque conteneur a son propre localhost).
+    
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: ${DB_NAME:-la_marine}
@@ -57,9 +47,7 @@ services:
     build:
       context: ./frontend
       args:
-        # Vue tourne dans LE NAVIGATEUR de l'utilisateur, pas dans le réseau
-        # Docker : il doit donc appeler le backend via localhost, comme le
-        # ferait n'importe quel visiteur du site depuis sa machine.
+    
         VITE_API_URL: ${VITE_API_URL:-http://localhost:3000/api}
     container_name: la-marine-frontend
     restart: unless-stopped
@@ -68,7 +56,7 @@ services:
     ports:
       - "8081:80"
 
-  # Interface web facultative pour consulter la base de données.
+
   adminer:
     image: adminer:latest
     container_name: la-marine-adminer
