@@ -24,12 +24,25 @@ function futureDateString(daysFromNow) {
   return d.toISOString().slice(0, 10);
 }
 
+// Certains tests utilisent une date "dans X jours" sans se soucier du jour
+// de la semaine. Comme le lundi est fermé (mock RestaurantSettings), une date
+// calculée dynamiquement peut accidentellement tomber un lundi selon le jour
+// où les tests sont exécutés (ex: sur GitHub Actions), faisant échouer des
+// tests qui ne testent pourtant pas cette règle. On garantit donc ici que la
+// date utilisée par défaut n'est jamais un lundi.
+function safeFutureDateString(daysFromNow) {
+  const d = new Date();
+  d.setDate(d.getDate() + daysFromNow);
+  if (d.getDay() === 1) d.setDate(d.getDate() + 1); // évite le lundi
+  return d.toISOString().slice(0, 10);
+}
+
 const validPayload = () => ({
   firstName: "Marie",
   lastName: "Dupont",
   email: "marie@exemple.fr",
   phone: "0600000000",
-  date: futureDateString(5),
+  date: safeFutureDateString(5),
   service: "dinner",
   time: "19h30",
   guests: 4,
