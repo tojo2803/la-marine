@@ -1,0 +1,82 @@
+version: "3.9"
+
+# Déploiement LOCAL complet du projet La Marine : base de données,
+# backend et frontend tournent chacun dans leur propre conteneur, comme
+# ce serait le cas en production, mais sur ta machine. Objectif : pouvoir
+# démontrer un "vrai" déploiement conteneurisé sans dépendre d'un
+# hébergeur externe.
+#
+# Démarrer :  docker compose up -d --build
+# Arrêter :   docker compose down
+# Tout effacer (recommence de zéro) : docker compose down -v
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: la-marine-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-la_marine}
+      POSTGRES_USER: ${DB_USER:-la_marine_app}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-LaMarine2026}
+    ports:
+      - "${DB_PORT:-5433}:5432"
+    volumes:
+      - la_marine_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-la_marine_app} -d ${DB_NAME:-la_marine}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    container_name: la-marine-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # À l'intérieur du réseau Docker, "postgres" est le nom du service
+      # ci-dessus (pas "localhost" : chaque conteneur a son propre localhost).
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-la_marine}
+      DB_USER: ${DB_USER:-la_marine_app}
+      DB_PASSWORD: ${DB_PASSWORD:-LaMarine2026}
+      JWT_SECRET: ${JWT_SECRET:-35fc3048d105fa4b3715cf43bb0f32d8ccf817f2595e0bf8c1e57c751950a371}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-8h}
+      CLIENT_ORIGIN: ${CLIENT_ORIGIN:-http://localhost:8081}
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Vue tourne dans LE NAVIGATEUR de l'utilisateur, pas dans le réseau
+        # Docker : il doit donc appeler le backend via localhost, comme le
+        # ferait n'importe quel visiteur du site depuis sa machine.
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000/api}
+    container_name: la-marine-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8081:80"
+
+  # Interface web facultative pour consulter la base de données.
+  adminer:
+    image: adminer:latest
+    container_name: la-marine-adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+volumes:
+  la_marine_pgdata:
